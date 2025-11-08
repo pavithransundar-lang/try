@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import CloseIcon from './icons/CloseIcon';
 import AnimatedButterfly from './AnimatedButterfly';
 import { playSound, sounds } from '../services/audioService';
-import { BUTTERFLY_COLORS } from '../constants';
+import { BUTTERFLY_TYPES } from '../constants';
+
+type ButterflyType = typeof BUTTERFLY_TYPES[number];
 
 interface Butterfly {
   id: number;
@@ -10,22 +12,20 @@ interface Butterfly {
   y: number;
   vx: number;
   vy: number;
-  color1: string;
-  color2: string;
+  type: ButterflyType;
   size: number;
 }
 
 const createButterfly = (id: number, width: number, height: number): Butterfly => {
-    const size = Math.random() * 40 + 50; // Use a good size range for the new SVGs
-    const colors = BUTTERFLY_COLORS[id % BUTTERFLY_COLORS.length];
+    const size = Math.random() * 50 + 60; 
+    const type = BUTTERFLY_TYPES[id % BUTTERFLY_TYPES.length];
     return {
         id,
         x: Math.random() * (width - size),
         y: Math.random() * (height - size),
         vx: (Math.random() - 0.5) * 2,
         vy: (Math.random() - 0.5) * 2,
-        color1: colors[0],
-        color2: colors[1],
+        type: type,
         size,
     };
 };
@@ -73,7 +73,7 @@ const CatchButterflyScreen: React.FC<{ onCatch: () => void }> = ({ onCatch }) =>
       let newVy = b.vy;
 
       if (newX <= 0 || newX >= width - b.size) newVx = -newVx;
-      if (newY <= 0 || newY >= height - b.size * 0.8) newVy = -newVy;
+      if (newY <= 0 || newY >= height - b.size) newVy = -newVy;
 
       // Add slight random movement
       newVx += (Math.random() - 0.5) * 0.2;
@@ -116,13 +116,13 @@ const CatchButterflyScreen: React.FC<{ onCatch: () => void }> = ({ onCatch }) =>
             left: b.x, 
             top: b.y,
             width: b.size,
-            height: b.size * 0.8, // Adjust height to match SVG aspect ratio
+            height: b.size,
           }}
           onClick={() => handleCatch(b.id)}
           role="button"
           aria-label="Catch butterfly"
         >
-          <AnimatedButterfly size={b.size} color1={b.color1} color2={b.color2} />
+          <AnimatedButterfly size={b.size} type={b.type} />
         </div>
       ))}
     </div>

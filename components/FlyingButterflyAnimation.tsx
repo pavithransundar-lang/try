@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AnimatedButterfly from './AnimatedButterfly';
-import { BUTTERFLY_COLORS } from '../constants';
+import { BUTTERFLY_TYPES } from '../constants';
 
 interface FlyingButterflyAnimationProps {
   targetTokenIndex: number;
@@ -17,10 +17,9 @@ const FlyingButterflyAnimation: React.FC<FlyingButterflyAnimationProps> = ({
   const [style, setStyle] = useState<React.CSSProperties>({ opacity: 0 });
   const [keyframes, setKeyframes] = useState('');
   const [butterflyProps] = useState(() => {
-    const colorIndex = Math.floor(Math.random() * BUTTERFLY_COLORS.length);
+    const typeIndex = Math.floor(Math.random() * BUTTERFLY_TYPES.length);
     return {
-      color1: BUTTERFLY_COLORS[colorIndex][0],
-      color2: BUTTERFLY_COLORS[colorIndex][1],
+      type: BUTTERFLY_TYPES[typeIndex],
       size: 80,
     };
   });

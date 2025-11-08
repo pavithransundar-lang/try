@@ -6,32 +6,39 @@ interface ButterflyIconProps {
 }
 
 const ButterflyIcon: React.FC<ButterflyIconProps> = ({ className = '', isFilled }) => {
-  // The isFilled prop now controls whether the wings are solid or outlined.
-  const fillStyle = isFilled ? 'currentColor' : 'none';
-  const strokeStyle = 'currentColor';
-
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill={fillStyle}
-      stroke={strokeStyle}
-      strokeWidth="1.5"
+      viewBox="0 0 100 100"
       className={className}
     >
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        d="M15.5,15.1c-2.3-1.6-2.3-4.6,0-6.2c2.6-1.8,5.8-1,5.8,2.7C21.3,16.1,18.1,16.9,15.5,15.1z" 
-      />
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        d="M8.5,15.1c2.3-1.6,2.3-4.6,0-6.2C5.9,7.1,2.8,7.9,2.8,11.6C2.8,16.1,5.9,16.9,8.5,15.1z" 
-      />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12,5v14" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M10,5c-2.2,0-4-1.8-4-4" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M14,5c2.2,0,4-1.8,4-4" />
+      <defs>
+        <linearGradient id="bf-wing-grad-1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#7dd3fc" />
+          <stop offset="100%" stopColor="#0ea5e9" />
+        </linearGradient>
+        <linearGradient id="bf-wing-grad-2" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f9a8d4" />
+          <stop offset="100%" stopColor="#f472b6" />
+        </linearGradient>
+        <filter id="bf-icon-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="#000000" floodOpacity="0.2" />
+        </filter>
+      </defs>
+      <g opacity={isFilled ? 1 : 0.4} filter="url(#bf-icon-glow)" style={{ transition: 'opacity 0.5s ease' }}>
+        {/* Wings */}
+        <path d="M50 50 C 10 0, 20 20, 20 50 C 20 80, 10 100, 50 50 Z" fill="url(#bf-wing-grad-1)"/>
+        <path d="M50 50 C 90 0, 80 20, 80 50 C 80 80, 90 100, 50 50 Z" fill="url(#bf-wing-grad-1)"/>
+        <path d="M50 50 C 25 30, 30 40, 30 50 C 30 60, 25 70, 50 50 Z" fill="url(#bf-wing-grad-2)"/>
+        <path d="M50 50 C 75 30, 70 40, 70 50 C 70 60, 75 70, 50 50 Z" fill="url(#bf-wing-grad-2)"/>
+
+        {/* Body */}
+        <path d="M48 30 C 48 20, 52 20, 52 30 V 70 C 52 80, 48 80, 48 70 Z" fill="#a855f7" />
+        
+        {/* Sparkles */}
+        <circle cx="30" cy="35" r="3" fill="white" opacity="0.9"/>
+        <circle cx="70" cy="35" r="3" fill="white" opacity="0.9"/>
+      </g>
     </svg>
   );
 };

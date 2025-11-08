@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import AnimatedButterfly from './AnimatedButterfly';
-import { BUTTERFLY_COLORS } from '../constants';
+import { BUTTERFLY_TYPES } from '../constants';
+
+type ButterflyType = typeof BUTTERFLY_TYPES[number];
 
 interface FlyingButterfly {
   id: number;
   startX: number;
   animationDelay: string;
   animationDuration: string;
-  color1: string;
-  color2: string;
+  type: ButterflyType,
   size: number;
 }
 
@@ -24,8 +25,7 @@ const QuestCompletionAnimation: React.FC<{ onAnimationEnd: () => void }> = ({ on
       startX: Math.random() * 100, // as vw
       animationDelay: `${Math.random() * 1.5}s`,
       animationDuration: `${Math.random() * 2 + 3}s`, // 3 to 5 seconds duration
-      color1: BUTTERFLY_COLORS[i % BUTTERFLY_COLORS.length][0],
-      color2: BUTTERFLY_COLORS[i % BUTTERFLY_COLORS.length][1],
+      type: BUTTERFLY_TYPES[i % BUTTERFLY_TYPES.length],
       size: Math.random() * 40 + 50,
     }));
     setButterflies(newButterflies);
@@ -46,7 +46,7 @@ const QuestCompletionAnimation: React.FC<{ onAnimationEnd: () => void }> = ({ on
               animationDuration: b.animationDuration,
             }}
           >
-            <AnimatedButterfly size={b.size} color1={b.color1} color2={b.color2} />
+            <AnimatedButterfly size={b.size} type={b.type} />
           </div>
         ))}
       </div>

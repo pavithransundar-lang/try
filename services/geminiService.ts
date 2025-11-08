@@ -1,8 +1,7 @@
-
 import { GoogleGenAI } from "@google/genai";
 import { STUDENT_NAME } from '../constants';
 
-const getMotivationalMessage = async (): Promise<string> => {
+export const getMotivationalMessage = async (): Promise<string> => {
     if (!process.env.API_KEY) {
         console.warn("API_KEY environment variable not set. Using fallback message.");
         return `Wonderful reading, Princess ${STUDENT_NAME}! You're one step closer on your quest!`;
@@ -24,5 +23,3 @@ const getMotivationalMessage = async (): Promise<string> => {
         return `Amazing job, ${STUDENT_NAME}! Keep shining bright on your reading adventure!`;
     }
 };
-
-export { getMotivationalMessage };

@@ -1,5 +1,4 @@
-
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { STUDENT_NAME, TOTAL_TOKENS } from './constants';
 import { getMotivationalMessage } from './services/geminiService';
 import MoodScreen from './components/MoodScreen';
@@ -12,6 +11,7 @@ import QuestCompletionAnimation from './components/QuestCompletionAnimation';
 import ChatBot from './components/ChatBot';
 import ChatIcon from './components/icons/ChatIcon';
 import FlyingButterflyAnimation from './components/FlyingButterflyAnimation';
+import CastleCelebration from './components/CastleCelebration';
 
 type Screen = 'mood' | 'quest' | 'catch';
 
@@ -23,6 +23,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showJournal, setShowJournal] = useState(false);
   const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
+  const [showCastleCelebration, setShowCastleCelebration] = useState(false);
   const [showChatBot, setShowChatBot] = useState(false);
   const [flyingButterflyTarget, setFlyingButterflyTarget] = useState<number | null>(null);
 
@@ -59,6 +60,7 @@ const App: React.FC = () => {
 
     if (newTokenCount === TOTAL_TOKENS) {
       setShowCompletionAnimation(true);
+      setShowCastleCelebration(true);
     } else {
       fetchMotivationalMessage();
     }
@@ -81,6 +83,7 @@ const App: React.FC = () => {
     setShowChatBot(false);
     setFlyingButterflyTarget(null);
     setShowCompletionAnimation(false);
+    setShowCastleCelebration(false);
     setScreen('mood');
   };
 
@@ -146,6 +149,13 @@ const App: React.FC = () => {
       {renderScreen()}
       {showCompletionAnimation && <QuestCompletionAnimation onAnimationEnd={() => setShowCompletionAnimation(false)} />}
       
+      {showCastleCelebration && (
+        <CastleCelebration
+            startElement={tokenRefs.current[TOTAL_TOKENS - 1]}
+            onAnimationEnd={() => setShowCastleCelebration(false)}
+        />
+      )}
+
       {flyingButterflyTarget !== null && (
         <FlyingButterflyAnimation
             targetTokenIndex={flyingButterflyTarget}
