@@ -1,38 +1,31 @@
-
 import React from 'react';
 
 interface ButterflyIconProps {
   className?: string;
-  isFilled: boolean;
+  isFilled?: boolean; // Kept for prop compatibility
 }
 
-const ButterflyIcon: React.FC<ButterflyIconProps> = ({ className = '', isFilled }) => {
-  if (isFilled) {
-    return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 100 100"
-        className={className}
-        style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }}
-      >
-        <defs>
-          <linearGradient id="wing-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#fbcfe8" />
-            <stop offset="100%" stopColor="#ddd6fe" />
-          </linearGradient>
-        </defs>
-        <path d="M48 20 C20 20, 20 60, 48 60 L52 60 C80 60, 80 20, 52 20 Z" fill="url(#wing-gradient)" stroke="#a78bfa" strokeWidth="2"/>
-        <path d="M48 80 C20 80, 20 40, 48 40 L52 40 C80 40, 80 80, 52 80 Z" fill="url(#wing-gradient)" stroke="#a78bfa" strokeWidth="2"/>
-        <path d="M50 35 L50 65" stroke="#4c1d95" strokeWidth="4" strokeLinecap="round" />
-        <path d="M50 35 Q40 25, 45 20" stroke="#4c1d95" strokeWidth="3" fill="none" strokeLinecap="round" />
-        <path d="M50 35 Q60 25, 55 20" stroke="#4c1d95" strokeWidth="3" fill="none" strokeLinecap="round" />
-      </svg>
-    );
-  }
-
+const ButterflyIcon: React.FC<ButterflyIconProps> = ({ className = '' }) => {
   return (
-    <div className={`${className} bg-white/30 rounded-full border-2 border-dashed border-purple-300 backdrop-blur-sm`}>
-    </div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      className={className}
+    >
+      <defs>
+        <linearGradient id="butterflyWingLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#fbcfe8" />
+          <stop offset="100%" stopColor="#f472b6" />
+        </linearGradient>
+        <linearGradient id="butterflyWingRight" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#d8b4fe" />
+          <stop offset="100%" stopColor="#a855f7" />
+        </linearGradient>
+      </defs>
+      <path fill="url(#butterflyWingLeft)" d="M15,16 C12,14 12,10 15,8 C18,6 22,7 22,12 C22,17 18,18 15,16 Z" />
+      <path fill="url(#butterflyWingRight)" d="M9,16 C12,14 12,10 9,8 C6,6 2,7 2,12 C2,17 6,18 9,16 Z" />
+      <path fill="#4c1d95" d="M11,6 L13,6 L13,18 L11,18 Z" />
+    </svg>
   );
 };
 

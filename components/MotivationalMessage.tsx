@@ -1,4 +1,3 @@
-
 import React from 'react';
 import SparkleIcon from './icons/SparkleIcon';
 
@@ -6,43 +5,48 @@ interface MotivationalMessageProps {
   message: string;
   isLoading: boolean;
   isComplete: boolean;
+  hasStarted: boolean;
 }
 
-const MotivationalMessage: React.FC<MotivationalMessageProps> = ({ message, isLoading, isComplete }) => {
+const MotivationalMessage: React.FC<MotivationalMessageProps> = ({ message, isLoading, isComplete, hasStarted }) => {
   let content;
+  
+  const containerClasses = "min-h-[70px] w-full max-w-2xl mx-auto flex items-center justify-center text-center p-4 rounded-full shadow-inner border border-white/30 text-purple-800";
+
   if (isLoading) {
     content = (
-      <div className="flex items-center justify-center space-x-2">
-        <div className="w-5 h-5 border-2 border-pink-300 border-t-transparent rounded-full animate-spin"></div>
-        <span className="italic">Generating a magical message...</span>
-      </div>
+        <div className={`${containerClasses} bg-purple-100/50`}>
+            <div className="flex items-center justify-center space-x-3">
+                <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
+                <span className="italic text-purple-700">Thinking of a magical message...</span>
+            </div>
+        </div>
     );
   } else if (isComplete) {
     content = (
-        <div className="flex items-center space-x-3">
-            <SparkleIcon className="w-8 h-8 text-yellow-300" />
-            <p className="text-xl font-semibold">You did it! You reached the princess castle! Hooray!</p>
-            <SparkleIcon className="w-8 h-8 text-yellow-300" />
+        <div className={`${containerClasses} bg-yellow-100/80`}>
+            <p className="text-lg font-semibold text-amber-800">🎉 Hooray! You've completed the quest and reached the Princess Castle! 🎉</p>
         </div>
     );
   } else if (message) {
     content = (
-      <div className="flex items-center space-x-3">
-        <SparkleIcon className="w-6 h-6 text-yellow-300 flex-shrink-0" />
-        <p className="text-lg italic">"{message}"</p>
+      <div className={`${containerClasses} bg-white/50 relative`}>
+        <SparkleIcon className="absolute top-1 left-5 w-6 h-6 animate-pulse" />
+        <p className="text-md italic px-12">"{message}"</p>
+        <SparkleIcon className="absolute bottom-1 right-5 w-6 h-6 animate-pulse [animation-delay:-0.5s]" />
       </div>
     );
   } else {
     content = (
-      <p className="text-lg text-purple-200">Complete a reading task to earn your first butterfly!</p>
+      <div className={`${containerClasses} bg-white/50`}>
+         <p className="text-md italic text-purple-600">"Let's start our reading quest, Princess Celine!"</p>
+      </div>
     );
   }
 
-  return (
-    <div className="min-h-[60px] w-full max-w-xl mx-auto flex items-center justify-center text-center p-4 bg-white/20 backdrop-blur-md rounded-2xl shadow-lg border border-white/30 text-purple-900">
-      {content}
-    </div>
-  );
+  return <div className="h-[80px] flex items-center justify-center">{content}</div>;
 };
 
 export default MotivationalMessage;

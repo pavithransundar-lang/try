@@ -1,16 +1,15 @@
-
 import { GoogleGenAI } from "@google/genai";
 import { STUDENT_NAME } from '../constants';
 
 const getMotivationalMessage = async (): Promise<string> => {
     if (!process.env.API_KEY) {
         console.warn("API_KEY environment variable not set. Using fallback message.");
-        return `Wonderful reading, Princess ${STUDENT_NAME}! You're one step closer to the castle!`;
+        return `Wonderful reading, Princess ${STUDENT_NAME}! You're one step closer on your quest!`;
     }
     
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-        const prompt = `You are a magical fairy godmother. Generate a very short (1-2 sentences), positive, and encouraging princess-themed message for a wonderful student named ${STUDENT_NAME}. She just earned a butterfly token for her reading. Congratulate her and motivate her to continue on her journey to the princess castle.`;
+        const prompt = `You are a magical fairy godmother. Generate a very short (1-2 sentences), positive, and encouraging princess-themed message for a wonderful student named ${STUDENT_NAME}. She just caught a magical butterfly for her reading. Congratulate her and motivate her to continue on her Royal Reading Quest to the castle.`;
         
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
