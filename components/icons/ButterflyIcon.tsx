@@ -2,29 +2,36 @@ import React from 'react';
 
 interface ButterflyIconProps {
   className?: string;
-  isFilled?: boolean; // Kept for prop compatibility
+  isFilled?: boolean;
 }
 
-const ButterflyIcon: React.FC<ButterflyIconProps> = ({ className = '' }) => {
+const ButterflyIcon: React.FC<ButterflyIconProps> = ({ className = '', isFilled }) => {
+  // The isFilled prop now controls whether the wings are solid or outlined.
+  const fillStyle = isFilled ? 'currentColor' : 'none';
+  const strokeStyle = 'currentColor';
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
+      fill={fillStyle}
+      stroke={strokeStyle}
+      strokeWidth="1.5"
       className={className}
     >
-      <defs>
-        <linearGradient id="butterflyWingLeft" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#fbcfe8" />
-          <stop offset="100%" stopColor="#f472b6" />
-        </linearGradient>
-        <linearGradient id="butterflyWingRight" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#d8b4fe" />
-          <stop offset="100%" stopColor="#a855f7" />
-        </linearGradient>
-      </defs>
-      <path fill="url(#butterflyWingLeft)" d="M15,16 C12,14 12,10 15,8 C18,6 22,7 22,12 C22,17 18,18 15,16 Z" />
-      <path fill="url(#butterflyWingRight)" d="M9,16 C12,14 12,10 9,8 C6,6 2,7 2,12 C2,17 6,18 9,16 Z" />
-      <path fill="#4c1d95" d="M11,6 L13,6 L13,18 L11,18 Z" />
+      <path 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        d="M15.5,15.1c-2.3-1.6-2.3-4.6,0-6.2c2.6-1.8,5.8-1,5.8,2.7C21.3,16.1,18.1,16.9,15.5,15.1z" 
+      />
+      <path 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        d="M8.5,15.1c2.3-1.6,2.3-4.6,0-6.2C5.9,7.1,2.8,7.9,2.8,11.6C2.8,16.1,5.9,16.9,8.5,15.1z" 
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12,5v14" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M10,5c-2.2,0-4-1.8-4-4" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M14,5c2.2,0,4-1.8,4-4" />
     </svg>
   );
 };

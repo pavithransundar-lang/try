@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import CloseIcon from './icons/CloseIcon';
+import AnimatedButterfly from './AnimatedButterfly';
+import { playSound, sounds } from '../services/audioService';
 
 interface Butterfly {
   id: number;
@@ -12,16 +14,28 @@ interface Butterfly {
   size: number;
 }
 
+const butterflyColors = [
+    ['#ffc0cb', '#ff69b4'], // Pink
+    ['#add8e6', '#87ceeb'], // Light Blue
+    ['#e6e6fa', '#dda0dd'], // Lavender
+    ['#fffacd', '#ffd700'], // Lemon/Gold
+    ['#f0e68c', '#eee8aa'], // Khaki/Pale Goldenrod
+    ['#fbaed2', '#f78fa7'], // Pink/Coral
+    ['#c1f0f0', '#80d4ff'], // Light Cyan/Blue
+    ['#f0ffff', '#b0e0e6'], // Azure/Powder Blue
+];
+
 const createButterfly = (id: number, width: number, height: number): Butterfly => {
-    const size = Math.random() * 30 + 40;
+    const size = Math.random() * 40 + 50; // Use a good size range for the new SVGs
+    const colors = butterflyColors[id % butterflyColors.length];
     return {
         id,
         x: Math.random() * (width - size),
         y: Math.random() * (height - size),
         vx: (Math.random() - 0.5) * 2,
         vy: (Math.random() - 0.5) * 2,
-        color1: `hsl(${Math.random() * 360}, 100%, 75%)`,
-        color2: `hsl(${Math.random() * 360}, 100%, 75%)`,
+        color1: colors[0],
+        color2: colors[1],
         size,
     };
 };
@@ -69,7 +83,7 @@ const CatchButterflyScreen: React.FC<{ onCatch: () => void }> = ({ onCatch }) =>
       let newVy = b.vy;
 
       if (newX <= 0 || newX >= width - b.size) newVx = -newVx;
-      if (newY <= 0 || newY >= height - b.size) newVy = -newVy;
+      if (newY <= 0 || newY >= height - b.size * 0.8) newVy = -newVy;
 
       // Add slight random movement
       newVx += (Math.random() - 0.5) * 0.2;
@@ -84,6 +98,7 @@ const CatchButterflyScreen: React.FC<{ onCatch: () => void }> = ({ onCatch }) =>
   };
 
   const handleCatch = (id: number) => {
+    playSound(sounds.catch);
     setCaught(id);
     setTimeout(() => {
         onCatch();
@@ -91,7 +106,7 @@ const CatchButterflyScreen: React.FC<{ onCatch: () => void }> = ({ onCatch }) =>
   };
 
   return (
-    <div ref={containerRef} className="fixed inset-0 bg-gray-900 w-full h-full">
+    <div ref={containerRef} className="fixed inset-0 bg-gray-900 w-full h-full overflow-hidden">
       <video ref={videoRef} className="absolute top-0 left-0 w-full h-full object-cover transform -scale-x-100" />
       <div className="absolute inset-0 bg-black/10"></div>
       
@@ -99,44 +114,27 @@ const CatchButterflyScreen: React.FC<{ onCatch: () => void }> = ({ onCatch }) =>
         <p className="font-bold text-lg">Tap a butterfly to catch it!</p>
       </div>
 
-      <button onClick={onCatch} className="absolute top-4 right-4 md:top-6 md:right-6 bg-pink-500 text-white rounded-full p-2 hover:bg-pink-600 transition shadow-lg">
+      <button onClick={onCatch} className="absolute top-4 right-4 md:top-6 md:right-6 bg-pink-500 text-white rounded-full p-2 hover:bg-pink-600 transition shadow-lg z-10">
         <CloseIcon className="w-6 h-6" />
       </button>
 
       {butterflies.map(b => (
         <div
           key={b.id}
-          className={`absolute transition-all duration-500 ease-out ${caught === b.id ? 'transform scale-150 opacity-0' : ''}`}
+          className={`absolute cursor-pointer transition-all duration-500 ease-out ${caught === b.id ? 'transform scale-150 opacity-0' : 'hover:scale-110'}`}
           style={{ 
             left: b.x, 
             top: b.y,
             width: b.size,
-            height: b.size,
+            height: b.size * 0.8, // Adjust height to match SVG aspect ratio
           }}
           onClick={() => handleCatch(b.id)}
+          role="button"
+          aria-label="Catch butterfly"
         >
-            <div 
-                className="absolute w-1/2 h-full rounded-full rounded-r-none origin-right animate-flutter-left"
-                style={{ background: `radial-gradient(circle, ${b.color1}, ${b.color2})` }}
-            ></div>
-            <div 
-                className="absolute right-0 w-1/2 h-full rounded-full rounded-l-none origin-left animate-flutter-right"
-                style={{ background: `radial-gradient(circle, ${b.color1}, ${b.color2})` }}
-            ></div>
+          <AnimatedButterfly size={b.size} color1={b.color1} color2={b.color2} />
         </div>
       ))}
-       <style>{`
-        @keyframes flutter-left {
-            0%, 100% { transform: rotateY(0deg); }
-            50% { transform: rotateY(45deg); }
-        }
-        @keyframes flutter-right {
-            0%, 100% { transform: rotateY(0deg); }
-            50% { transform: rotateY(-45deg); }
-        }
-        .animate-flutter-left { animation: flutter-left 0.5s infinite; }
-        .animate-flutter-right { animation: flutter-right 0.5s infinite; }
-      `}</style>
     </div>
   );
 };
