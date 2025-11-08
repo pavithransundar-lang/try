@@ -37,10 +37,10 @@ const TokenBoard: React.FC<TokenBoardProps> = ({ tokenCount, tokenRefs }) => {
                   className="flex flex-col items-center text-center w-20 relative"
                 >
                   <div className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center transition-all duration-500 ease-in-out relative
-                    ${isCompleted ? 'bg-pink-100 shadow-lg scale-110' : 'bg-purple-200/50'}
-                    ${isCurrent ? 'animate-pulse border-2 border-pink-400' : ''}
+                    ${isCompleted ? 'bg-white shadow-lg scale-110' : 'bg-purple-200/50'}
+                    ${isCurrent ? 'animate-glow-ring' : ''}
                     ${isNewlyCompleted ? 'animate-sparkle-pop' : ''}`}>
-                      {isCompleted && <div className="absolute inset-0 rounded-full bg-pink-300/50 animate-ping-slow" />}
+                      {isCompleted && <div className="absolute inset-0 rounded-full bg-violet-200/50 animate-ping-slow" />}
                       <div className="w-12 h-12 md:w-16 md:h-16">
                           <IconComponent isFilled={isCompleted} />
                       </div>
@@ -50,9 +50,9 @@ const TokenBoard: React.FC<TokenBoardProps> = ({ tokenCount, tokenRefs }) => {
                   </p>
                 </div>
                 {index < QUEST_STEPS.length - 1 && (
-                   <div className="flex-1 h-2 bg-purple-200/70 rounded-full mt-10 relative overflow-hidden">
+                   <div className="flex-1 h-2 bg-gradient-to-r from-violet-300 to-fuchsia-300 rounded-full mt-10 relative overflow-hidden">
                      <div 
-                       className="absolute top-0 left-0 h-full bg-gradient-to-r from-pink-300 to-purple-300 rounded-full transition-all duration-1000 ease-out"
+                       className="absolute top-0 left-0 h-full bg-gradient-to-r from-sky-400 to-violet-500 rounded-full transition-all duration-1000 ease-out"
                        style={{ width: index < tokenCount ? '100%' : '0%' }}
                      />
                      {index < tokenCount && <div className="sparkle-trail" />}
@@ -71,6 +71,13 @@ const TokenBoard: React.FC<TokenBoardProps> = ({ tokenCount, tokenRefs }) => {
         }
         .animate-sparkle-pop {
           animation: sparkle-pop 0.6s ease-out forwards;
+        }
+        @keyframes glow-ring {
+          0%, 100% { box-shadow: 0 0 12px 3px rgba(139, 92, 246, 0.4); }
+          50% { box-shadow: 0 0 20px 8px rgba(139, 92, 246, 0.7); }
+        }
+        .animate-glow-ring {
+          animation: glow-ring 2.5s ease-in-out infinite;
         }
         .animate-ping-slow {
           animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;

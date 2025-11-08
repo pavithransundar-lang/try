@@ -99,10 +99,10 @@ const App: React.FC = () => {
           <>
             <main className="w-full max-w-4xl mx-auto bg-white/60 backdrop-blur-md rounded-3xl shadow-lg p-6 md:p-10 border border-white/50">
               <header className="text-center mb-6">
-                <h1 className="text-4xl md:text-6xl font-bold text-pink-500" style={{fontFamily: "'Dancing Script', cursive"}}>
+                <h1 className="text-4xl md:text-6xl font-bold text-fuchsia-600" style={{fontFamily: "'Dancing Script', cursive"}}>
                   Celine's Royal Reading Quest
                 </h1>
-                <p className="text-md md:text-lg text-purple-500 mt-2">
+                <p className="text-md md:text-lg text-purple-600 mt-2">
                   Earn butterflies and travel to the magical castle!
                 </p>
               </header>
