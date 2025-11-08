@@ -1,3 +1,4 @@
+
 import React from 'react';
 import JournalIcon from './icons/JournalIcon';
 

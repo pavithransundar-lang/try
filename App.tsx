@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
+
+import React, { useState, useCallback, useRef } from 'react';
 import { STUDENT_NAME, TOTAL_TOKENS } from './constants';
 import { getMotivationalMessage } from './services/geminiService';
 import MoodScreen from './components/MoodScreen';
@@ -7,6 +8,10 @@ import TokenBoard from './components/TokenBoard';
 import MotivationalMessage from './components/MotivationalMessage';
 import Controls from './components/Controls';
 import RoyalJournalModal from './components/RoyalJournalModal';
+import QuestCompletionAnimation from './components/QuestCompletionAnimation';
+import ChatBot from './components/ChatBot';
+import ChatIcon from './components/icons/ChatIcon';
+import FlyingButterflyAnimation from './components/FlyingButterflyAnimation';
 
 type Screen = 'mood' | 'quest' | 'catch';
 
@@ -17,6 +22,11 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showJournal, setShowJournal] = useState(false);
+  const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
+  const [showChatBot, setShowChatBot] = useState(false);
+  const [flyingButterflyTarget, setFlyingButterflyTarget] = useState<number | null>(null);
+
+  const tokenRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const isCompleted = tokenCount >= TOTAL_TOKENS;
 
@@ -40,17 +50,26 @@ const App: React.FC = () => {
   const handleGoCatch = () => {
     setScreen('catch');
   };
-
-  const handleButterflyCaught = () => {
-    setScreen('quest');
-    if (isCompleted) return;
+  
+  const handleFlyAnimationEnd = () => {
+    setFlyingButterflyTarget(null);
 
     const newTokenCount = tokenCount + 1;
     setTokenCount(newTokenCount);
 
-    if (newTokenCount < TOTAL_TOKENS) {
+    if (newTokenCount === TOTAL_TOKENS) {
+      setShowCompletionAnimation(true);
+    } else {
       fetchMotivationalMessage();
     }
+  };
+
+  const handleButterflyCaught = () => {
+    setScreen('quest');
+    if (isCompleted || flyingButterflyTarget !== null) return;
+    
+    // Trigger the animation for the next token slot
+    setFlyingButterflyTarget(tokenCount);
   };
 
   const handleReset = () => {
@@ -59,6 +78,9 @@ const App: React.FC = () => {
     setError(null);
     setIsLoading(false);
     setShowJournal(false);
+    setShowChatBot(false);
+    setFlyingButterflyTarget(null);
+    setShowCompletionAnimation(false);
     setScreen('mood');
   };
 
@@ -83,7 +105,7 @@ const App: React.FC = () => {
               </header>
 
               <section className="my-8">
-                <TokenBoard tokenCount={tokenCount} />
+                <TokenBoard tokenCount={tokenCount} tokenRefs={tokenRefs} />
               </section>
 
               <section className="my-8">
@@ -101,7 +123,7 @@ const App: React.FC = () => {
                   onEarnToken={handleGoCatch}
                   onReset={handleReset}
                   isCompleted={isCompleted}
-                  isLoading={isLoading}
+                  isLoading={isLoading || flyingButterflyTarget !== null}
                   onShowJournal={() => setShowJournal(true)}
                 />
               </section>
@@ -122,6 +144,26 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFEFFA] to-[#DEE8FF] text-gray-800 flex flex-col items-center justify-center p-4">
       {renderScreen()}
+      {showCompletionAnimation && <QuestCompletionAnimation onAnimationEnd={() => setShowCompletionAnimation(false)} />}
+      
+      {flyingButterflyTarget !== null && (
+        <FlyingButterflyAnimation
+            targetTokenIndex={flyingButterflyTarget}
+            tokenRefs={tokenRefs}
+            onAnimationEnd={handleFlyAnimationEnd}
+        />
+      )}
+
+      {screen === 'quest' && !showChatBot && (
+          <button
+              onClick={() => setShowChatBot(true)}
+              className="fixed bottom-4 right-4 w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg flex items-center justify-center transform hover:scale-110 transition-transform z-40"
+              aria-label="Open magical helper"
+          >
+              <ChatIcon className="w-8 h-8" />
+          </button>
+      )}
+      {showChatBot && <ChatBot onClose={() => setShowChatBot(false)} />}
     </div>
   );
 };

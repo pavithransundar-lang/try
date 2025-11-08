@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import CloseIcon from './icons/CloseIcon';
 import AnimatedButterfly from './AnimatedButterfly';
 import { playSound, sounds } from '../services/audioService';
+import { BUTTERFLY_COLORS } from '../constants';
 
 interface Butterfly {
   id: number;
@@ -14,20 +15,9 @@ interface Butterfly {
   size: number;
 }
 
-const butterflyColors = [
-    ['#ffc0cb', '#ff69b4'], // Pink
-    ['#add8e6', '#87ceeb'], // Light Blue
-    ['#e6e6fa', '#dda0dd'], // Lavender
-    ['#fffacd', '#ffd700'], // Lemon/Gold
-    ['#f0e68c', '#eee8aa'], // Khaki/Pale Goldenrod
-    ['#fbaed2', '#f78fa7'], // Pink/Coral
-    ['#c1f0f0', '#80d4ff'], // Light Cyan/Blue
-    ['#f0ffff', '#b0e0e6'], // Azure/Powder Blue
-];
-
 const createButterfly = (id: number, width: number, height: number): Butterfly => {
     const size = Math.random() * 40 + 50; // Use a good size range for the new SVGs
-    const colors = butterflyColors[id % butterflyColors.length];
+    const colors = BUTTERFLY_COLORS[id % BUTTERFLY_COLORS.length];
     return {
         id,
         x: Math.random() * (width - size),
