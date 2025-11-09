@@ -19,7 +19,7 @@ const CastleCelebration: React.FC<CastleCelebrationProps> = ({ startElement, onA
     }
 
     const step1Timer = setTimeout(() => setAnimationStep(1), 100);
-    const endTimer = setTimeout(onAnimationEnd, 4000); 
+    const endTimer = setTimeout(onAnimationEnd, 5000); 
 
     return () => {
       clearTimeout(step1Timer);
@@ -34,7 +34,7 @@ const CastleCelebration: React.FC<CastleCelebrationProps> = ({ startElement, onA
     width: `${startPos.width}px`,
     height: `${startPos.height}px`,
     transition: 'all 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55)',
-    zIndex: 10,
+    zIndex: 60,
     ...(animationStep >= 1 && {
       top: '50%',
       left: '50%',
@@ -43,19 +43,21 @@ const CastleCelebration: React.FC<CastleCelebrationProps> = ({ startElement, onA
   };
 
   const sparkles = Array.from({ length: 40 });
-  const lightBeams = Array.from({ length: 8 });
-  const butterflies = React.useMemo(() => Array.from({ length: 5 }).map((_, i) => ({
+  const lightBeams = Array.from({ length: 10 });
+  const butterflies = React.useMemo(() => Array.from({ length: 6 }).map((_, i) => ({
       id: i,
       type: BUTTERFLY_TYPES[i % BUTTERFLY_TYPES.length],
-      size: Math.random() * 20 + 50,
-      duration: `${Math.random() * 2 + 3}s`, // 3-5s
-      delay: `${Math.random() * 0.5}s`,
+      size: Math.random() * 20 + 60,
+      duration: `${Math.random() * 5 + 8}s`, // 8-13s for a slow orbit
+      delay: `${Math.random() * 1}s`,
+      radius: `${Math.random() * 100 + 180}px`, // orbit radius
   })), []);
 
 
   return (
     <div className="fixed inset-0 z-50 pointer-events-none">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in" />
+      
       <div style={castleStyle}>
         <CastleIcon isFilled={true} />
       </div>
@@ -68,7 +70,7 @@ const CastleCelebration: React.FC<CastleCelebrationProps> = ({ startElement, onA
           {/* Light Beams */}
           <div className="beams-container">
             {lightBeams.map((_, i) => (
-              <div key={i} className="light-beam" style={{ '--r': `${i * 45}deg` } as React.CSSProperties}/>
+              <div key={i} className="light-beam" style={{ '--i': i } as React.CSSProperties}/>
             ))}
           </div>
 
@@ -80,15 +82,17 @@ const CastleCelebration: React.FC<CastleCelebrationProps> = ({ startElement, onA
               style={{
                 '--d': `${Math.random() * 1.5 + 0.5}s`,
                 '--a': `${Math.random() * 360}deg`,
-                '--dist': `${Math.random() * 250 + 50}px`,
+                '--dist': `${Math.random() * 250 + 80}px`,
               } as React.CSSProperties}
             />
           ))}
 
           {/* Fluttering Butterflies */}
           {butterflies.map(b => (
-            <div key={b.id} className="flutter-container" style={{ animationDuration: b.duration, animationDelay: b.delay }}>
-                 <AnimatedButterfly size={b.size} type={b.type} />
+            <div key={b.id} className="orbit-container" style={{ animationDuration: b.duration, animationDelay: b.delay }}>
+                 <div className="orbit-path" style={{'--radius': b.radius} as React.CSSProperties}>
+                    <AnimatedButterfly size={b.size} type={b.type} />
+                 </div>
             </div>
           ))}
         </div>
@@ -99,22 +103,22 @@ const CastleCelebration: React.FC<CastleCelebrationProps> = ({ startElement, onA
           to { opacity: 1; }
         }
         .animate-fade-in {
-          animation: fade-in 0.5s ease-out forwards;
+          animation: fade-in 0.8s ease-out forwards;
         }
 
         .glow-effect {
           position: absolute;
-          width: 400px;
-          height: 400px;
-          top: -200px;
-          left: -200px;
-          background: radial-gradient(circle, rgba(252, 211, 77, 0.4) 0%, rgba(252, 211, 77, 0) 70%);
-          animation: glow-pulse 2s ease-in-out infinite;
+          width: 500px;
+          height: 500px;
+          top: -250px;
+          left: -250px;
+          background: radial-gradient(circle, rgba(249, 168, 212, 0.3) 0%, rgba(253, 224, 71, 0.3) 50%, transparent 70%);
+          animation: glow-pulse 3s ease-in-out infinite;
         }
         @keyframes glow-pulse {
-          0% { transform: scale(0.8); opacity: 0.5; }
+          0% { transform: scale(0.9); opacity: 0.7; }
           50% { transform: scale(1.1); opacity: 1; }
-          100% { transform: scale(0.8); opacity: 0.5; }
+          100% { transform: scale(0.9); opacity: 0.7; }
         }
 
         .beams-container {
@@ -123,26 +127,27 @@ const CastleCelebration: React.FC<CastleCelebrationProps> = ({ startElement, onA
             left: 0;
             width: 1px;
             height: 1px;
-            animation: rotate-beams 20s linear infinite;
+            transform: rotate(-20deg);
+            animation: rotate-beams 30s linear infinite;
         }
         .light-beam {
           position: absolute;
-          width: 4px;
-          height: 500px;
-          background: linear-gradient(to top, transparent, #fef9c3, transparent);
-          transform-origin: top;
-          transform: rotate(var(--r)) translateY(-250px) scaleY(0);
+          width: 3px;
+          height: 600px;
+          background: linear-gradient(to top, transparent, rgba(254, 249, 195, 0.5), transparent);
+          transform-origin: center -50px;
+          transform: rotate(calc(var(--i) * 36deg));
           opacity: 0;
-          animation: shoot-beam 1.5s 0.5s ease-out forwards;
+          animation: shimmer-beam 4s ease-in-out infinite;
+          animation-delay: calc(var(--i) * 0.2s + 0.8s);
         }
         @keyframes rotate-beams {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+          from { transform: rotate(-20deg); }
+          to { transform: rotate(340deg); }
         }
-        @keyframes shoot-beam {
-          0% { opacity: 0; transform: rotate(var(--r)) translateY(-250px) scaleY(0); }
-          50% { opacity: 0.7; transform: rotate(var(--r)) translateY(-250px) scaleY(1); }
-          100% { opacity: 0; transform: rotate(var(--r)) translateY(-250px) scaleY(1); }
+        @keyframes shimmer-beam {
+          0%, 100% { opacity: 0; transform: rotate(calc(var(--i) * 36deg)) scaleY(0.8); }
+          50% { opacity: 0.7; transform: rotate(calc(var(--i) * 36deg)) scaleY(1); }
         }
 
         .sparkle {
@@ -151,33 +156,33 @@ const CastleCelebration: React.FC<CastleCelebrationProps> = ({ startElement, onA
           height: 8px;
           background: #fde047;
           border-radius: 50%;
-          animation: sparkle-fly var(--d) 0.5s ease-out forwards;
+          animation: sparkle-fly var(--d) 0.8s ease-out forwards;
         }
         @keyframes sparkle-fly {
           0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
           100% { transform: rotate(var(--a)) translateX(var(--dist)) scale(0); opacity: 0; }
         }
 
-        .flutter-container {
+        .orbit-container {
             position: absolute;
             top: 0;
             left: 0;
             opacity: 0;
-            animation: flutter-path ease-in-out infinite alternate, fade-in 1s 0.8s forwards;
+            animation: rotate-orbit linear infinite, fade-in 1.5s 1s forwards;
+        }
+        .orbit-path {
+            animation: translate-orbit 5s ease-in-out infinite alternate;
+        }
+        @keyframes rotate-orbit {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes translate-orbit {
+            from { transform: translateX(var(--radius)) translateY(0) rotate(0deg); }
+            to { transform: translateX(calc(var(--radius) * 0.8)) translateY(20px) rotate(-10deg); }
         }
         @keyframes fade-in {
           to { opacity: 1; }
-        }
-        .flutter-container:nth-child(1) { --path-x: 120px; --path-y: -150px; }
-        .flutter-container:nth-child(2) { --path-x: -150px; --path-y: 100px; }
-        .flutter-container:nth-child(3) { --path-x: 180px; --path-y: 50px; }
-        .flutter-container:nth-child(4) { --path-x: -100px; --path-y: -160px; }
-        .flutter-container:nth-child(5) { --path-x: 80px; --path-y: 140px; }
-        @keyframes flutter-path {
-          0% { transform: translate(0, 0) rotate(0deg); }
-          25% { transform: translate(calc(var(--path-x) * 0.5), calc(var(--path-y) * 0.2)) rotate(10deg); }
-          75% { transform: translate(calc(var(--path-x) * 0.8), calc(var(--path-y) * 0.9)) rotate(-10deg); }
-          100% { transform: translate(var(--path-x), var(--path-y)) rotate(0deg); }
         }
       `}</style>
     </div>

@@ -6,27 +6,29 @@ type ButterflyType = typeof BUTTERFLY_TYPES[number];
 
 interface FlyingButterfly {
   id: number;
-  startX: number;
   animationDelay: string;
   animationDuration: string;
-  type: ButterflyType,
+  type: ButterflyType;
   size: number;
+  xDrift: number;
+  rotation: number;
 }
 
 const QuestCompletionAnimation: React.FC<{ onAnimationEnd: () => void }> = ({ onAnimationEnd }) => {
   const [butterflies, setButterflies] = useState<FlyingButterfly[]>([]);
 
   useEffect(() => {
-    // End the animation after 6 seconds
-    const timer = setTimeout(onAnimationEnd, 6000);
+    // End the animation after 4 seconds to transition to the next scene.
+    const timer = setTimeout(onAnimationEnd, 4000);
 
-    const newButterflies: FlyingButterfly[] = Array.from({ length: 15 }).map((_, i) => ({
+    const newButterflies: FlyingButterfly[] = Array.from({ length: 20 }).map((_, i) => ({
       id: i,
-      startX: Math.random() * 100, // as vw
       animationDelay: `${Math.random() * 1.5}s`,
-      animationDuration: `${Math.random() * 2 + 3}s`, // 3 to 5 seconds duration
+      animationDuration: `${Math.random() * 2 + 2.5}s`, // 2.5 to 4.5 seconds
       type: BUTTERFLY_TYPES[i % BUTTERFLY_TYPES.length],
       size: Math.random() * 40 + 50,
+      xDrift: (Math.random() - 0.5) * 40, // vw drift
+      rotation: (Math.random() - 0.5) * 60, // final rotation
     }));
     setButterflies(newButterflies);
 
@@ -39,37 +41,39 @@ const QuestCompletionAnimation: React.FC<{ onAnimationEnd: () => void }> = ({ on
         {butterflies.map(b => (
           <div
             key={b.id}
-            className="absolute bottom-[-100px] animate-fly-up"
+            className="absolute bottom-[-100px] left-1/2 -translate-x-1/2 animate-fly-up-swirl"
             style={{
-              left: `${b.startX}vw`,
               animationDelay: b.animationDelay,
               animationDuration: b.animationDuration,
-            }}
+              '--x-drift': `${b.xDrift}vw`,
+              '--r-end': `${b.rotation}deg`,
+            } as React.CSSProperties}
           >
             <AnimatedButterfly size={b.size} type={b.type} />
           </div>
         ))}
       </div>
       <style>{`
-        @keyframes fly-up {
+        @keyframes fly-up-swirl {
           0% {
-            transform: translateY(0) scale(1) rotate(0deg);
-            opacity: 1;
+            transform: translateY(0) scale(0.6) rotate(0deg);
+            opacity: 0;
           }
           20% {
-            transform: translateY(-25vh) scale(1.1) rotate(-10deg);
+            opacity: 1;
+            transform: translateY(-25vh) scale(1) rotate(-15deg);
           }
           80% {
             opacity: 1;
           }
           100% {
-            transform: translateY(-120vh) scale(0.5) rotate(10deg);
+            transform: translateY(-120vh) translateX(var(--x-drift)) scale(1.2) rotate(var(--r-end));
             opacity: 0;
           }
         }
-        .animate-fly-up {
-          animation-name: fly-up;
-          animation-timing-function: ease-in-out;
+        .animate-fly-up-swirl {
+          animation-name: fly-up-swirl;
+          animation-timing-function: cubic-bezier(0.3, 0, 0.7, 1);
           animation-fill-mode: forwards;
         }
       `}</style>

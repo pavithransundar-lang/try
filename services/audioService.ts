@@ -1,3 +1,4 @@
+
 /**
  * A simple audio service to play sound effects.
  */
@@ -13,20 +14,48 @@ export const sounds = {
   newMessage: newMessageSound,
 };
 
+// FIX: Manage a pool of audio elements to prevent sound interruption errors.
+const audioPool: HTMLAudioElement[] = [];
+const POOL_SIZE = 5;
+for (let i = 0; i < POOL_SIZE; i++) {
+  audioPool.push(new Audio());
+}
+let currentAudioIndex = 0;
+
 /**
- * Plays a sound from a base64 data URL.
+ * Plays a sound from a base64 data URL using a managed pool of audio elements.
  * @param sound - The base64 data URL of the sound to play.
  */
 export const playSound = (sound: string) => {
   try {
-    const audio = new Audio(sound);
-    audio.play().catch(error => {
-        // Autoplay was prevented. This can happen if the user hasn't interacted with the page yet.
-        // This is a graceful failure, so we just log a warning.
-        console.warn("Sound playback was prevented:", error);
-    });
-  } catch (error)
- {
-    console.error("Error playing sound:", error);
+    const audio = audioPool[currentAudioIndex];
+    currentAudioIndex = (currentAudioIndex + 1) % POOL_SIZE;
+
+    // Stop and reset the audio element if it's currently playing
+    if (!audio.paused) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+
+    audio.src = sound;
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise.catch(error => {
+        // The "AbortError" is thrown when playback is interrupted, e.g., by component unmount.
+        // We can safely ignore it as it's not a critical error.
+        if (error.name === 'AbortError') {
+          return;
+        }
+        // Autoplay prevention is a common browser policy.
+        if (error.name === 'NotAllowedError') {
+          console.warn("Sound playback was prevented by the browser. User interaction is needed first.");
+          return;
+        }
+        console.error("Error playing sound:", error);
+      });
+    }
+  } catch (error) {
+    console.error("Error setting up sound:", error);
   }
 };

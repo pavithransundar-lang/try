@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+
+import React, { useState, useCallback, useRef } from 'react';
 import { STUDENT_NAME, TOTAL_TOKENS } from './constants';
 import { getMotivationalMessage } from './services/geminiService';
 import MoodScreen from './components/MoodScreen';
@@ -37,8 +38,18 @@ const App: React.FC = () => {
     try {
       const message = await getMotivationalMessage();
       setMessages(prev => [...prev, message]);
-    } catch (err) {
-      setError('Failed to get a magical message. Please try again!');
+    } catch (err: any) {
+      // FIX: Improved error handling for Gemini API calls.
+      // This provides user-friendly feedback for rate limits and other errors,
+      // while still giving positive reinforcement with a fallback message.
+      const errorMessage = err?.message || err?.toString() || '';
+      if (errorMessage.includes('429') || errorMessage.includes('RESOURCE_EXHAUSTED')) {
+        setError("The magical message fairies are taking a short nap! Let's give them a moment.");
+        setMessages(prev => [...prev, `You're doing wonderfully, ${STUDENT_NAME}! Keep going!`]);
+      } else {
+        setError('A little magical interference! Could not get a new message.');
+        setMessages(prev => [...prev, `Amazing reading, ${STUDENT_NAME}! You've earned a butterfly!`]);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -59,12 +70,19 @@ const App: React.FC = () => {
     setTokenCount(newTokenCount);
 
     if (newTokenCount === TOTAL_TOKENS) {
+      // Start the butterfly swarm animation first for a fluid sequence.
       setShowCompletionAnimation(true);
-      setShowCastleCelebration(true);
     } else {
       fetchMotivationalMessage();
     }
   };
+
+  const handleCompletionAnimationEnd = () => {
+      // Once the swarm is done, hide it and show the final castle celebration.
+      setShowCompletionAnimation(false);
+      setShowCastleCelebration(true);
+  };
+
 
   const handleButterflyCaught = () => {
     setScreen('quest');
@@ -147,7 +165,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFEFFA] to-[#DEE8FF] text-gray-800 flex flex-col items-center justify-center p-4">
       {renderScreen()}
-      {showCompletionAnimation && <QuestCompletionAnimation onAnimationEnd={() => setShowCompletionAnimation(false)} />}
+      {showCompletionAnimation && <QuestCompletionAnimation onAnimationEnd={handleCompletionAnimationEnd} />}
       
       {showCastleCelebration && (
         <CastleCelebration

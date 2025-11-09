@@ -1,3 +1,4 @@
+
 import { GoogleGenAI } from "@google/genai";
 import { STUDENT_NAME } from '../constants';
 
@@ -16,10 +17,10 @@ export const getMotivationalMessage = async (): Promise<string> => {
             contents: prompt,
         });
 
-        // FIX: Per Gemini API guidelines, access the 'text' property directly.
         return response.text;
     } catch (error) {
+        // FIX: Log the error for debugging and re-throw it so the UI layer can handle it gracefully.
         console.error("Error fetching motivational message from Gemini:", error);
-        return `Amazing job, ${STUDENT_NAME}! Keep shining bright on your reading adventure!`;
+        throw error;
     }
 };
