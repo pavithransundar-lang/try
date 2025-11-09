@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from 'react';
 import SparkleIcon from './icons/SparkleIcon';
-import { playSound, sounds } from '../services/audioService';
 
 interface MotivationalMessageProps {
   message: string;
@@ -12,21 +11,11 @@ interface MotivationalMessageProps {
 }
 
 const MotivationalMessage: React.FC<MotivationalMessageProps> = ({ message, isLoading, isComplete, hasStarted }) => {
-  // FIX: The useRef hook was incorrectly typed. When no initial value is provided,
-  // `useRef`'s `current` property is `undefined`. The type must be `string | undefined`
-  // to reflect this, which resolves the TypeScript error.
-  // FIX: The useRef hook requires an initial value. Providing `undefined` explicitly
-  // satisfies this requirement for older TypeScript/React type definitions.
   const prevMessageRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    // Play sound only when a new message arrives, not on the initial render or completion.
-    if (message && message !== prevMessageRef.current && !isComplete && !isLoading) {
-      playSound(sounds.newMessage);
-    }
-    // Update the ref to the current message for the next render.
     prevMessageRef.current = message;
-  }, [message, isComplete, isLoading]);
+  }, [message]);
 
   let content;
   
@@ -46,7 +35,7 @@ const MotivationalMessage: React.FC<MotivationalMessageProps> = ({ message, isLo
   } else if (isComplete) {
     content = (
         <div className={`${containerClasses} bg-yellow-100/80`}>
-            <p className="text-lg font-semibold text-amber-800">🎉 Hooray! You've completed the quest and reached the Princess Castle! 🎉</p>
+            <p className="text-lg font-semibold text-amber-800">🎉 You did it! You've reached the Royal Castle! 🎉</p>
         </div>
     );
   } else if (message) {

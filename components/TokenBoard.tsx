@@ -1,34 +1,46 @@
+
 import React from 'react';
-import { QUEST_STEPS } from '../constants';
+import { QUEST_STEPS, CastleType } from '../constants';
 import ButterflyIcon from './icons/ButterflyIcon';
-import CastleIcon from './icons/CastleIcon';
 import TreeIcon from './icons/TreeIcon';
 import DiamondIcon from './icons/DiamondIcon';
 import KeyIcon from './icons/KeyIcon';
+import CastleIcon from './icons/CastleIcon';
+import FairytaleCastleIcon from './icons/FairytaleCastleIcon';
+import CrystalCastleIcon from './icons/CrystalCastleIcon';
+import ForestFortressIcon from './icons/ForestFortressIcon';
 
 interface TokenBoardProps {
   tokenCount: number;
   tokenRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
+  selectedCastle: CastleType;
 }
 
-const ICONS = [
+const castleComponents: Record<CastleType, React.FC<any>> = {
+    classic: CastleIcon,
+    fairytale: FairytaleCastleIcon,
+    crystal: CrystalCastleIcon,
+    forest: ForestFortressIcon,
+};
+
+// Re-calibrated SVG path segments for better visual balance and increased spacing.
+const PATH_SEGMENTS = [
+  "M 120 80 C 200 40, 300 40, 380 80", // Stage 1 to 2
+  "M 380 80 C 460 120, 560 120, 640 80", // Stage 2 to 3
+  "M 640 80 C 720 40, 820 40, 900 80", // Stage 3 to 4
+  "M 900 80 C 980 120, 1080 120, 1160 80", // Stage 4 to 5
+];
+
+
+const TokenBoard: React.FC<TokenBoardProps> = ({ tokenCount, tokenRefs, selectedCastle }) => {
+  const ICONS = [
     (props: any) => <ButterflyIcon {...props} />,
     (props: any) => <TreeIcon {...props} />,
     (props: any) => <DiamondIcon {...props} />,
     (props: any) => <KeyIcon {...props} />,
-    (props: any) => <CastleIcon {...props} />,
-];
-
-// Re-calibrated SVG path segments for better visual balance and spacing.
-const PATH_SEGMENTS = [
-  "M 60 80 C 150 40, 260 40, 350 80", // Stage 1 to 2
-  "M 350 80 C 440 120, 550 120, 640 80", // Stage 2 to 3
-  "M 640 80 C 730 40, 840 40, 930 80", // Stage 3 to 4
-  "M 930 80 C 1020 120, 1130 120, 1220 80", // Stage 4 to 5
-];
-
-
-const TokenBoard: React.FC<TokenBoardProps> = ({ tokenCount, tokenRefs }) => {
+    castleComponents[selectedCastle] || castleComponents.classic,
+  ];
+  
   return (
     <>
       <div className="w-full mx-auto p-4 relative min-h-[220px]">
@@ -92,7 +104,7 @@ const TokenBoard: React.FC<TokenBoardProps> = ({ tokenCount, tokenRefs }) => {
                 <div 
                   key={step.name}
                   ref={el => { if (tokenRefs.current) tokenRefs.current[index] = el; }}
-                  className="flex flex-col items-center text-center w-32 relative floating-icon"
+                  className="flex flex-col items-center text-center w-28 relative floating-icon"
                   style={{ animationDelay: `${index * 0.4}s`}}
                 >
                   <div className={`w-28 h-28 md:w-32 md:h-32 rounded-full flex items-center justify-center transition-all duration-500 ease-in-out relative

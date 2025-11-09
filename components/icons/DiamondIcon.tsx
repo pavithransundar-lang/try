@@ -5,52 +5,51 @@ const DiamondIcon: React.FC<{ className?: string; isFilled?: boolean; }> = ({ cl
         xmlns="http://www.w3.org/2000/svg" 
         viewBox="0 0 100 100" 
         className={className}
+        style={{ overflow: 'visible' }}
     >
         <defs>
-            <linearGradient id="diamond-icon-main" x1="0.5" y1="0" x2="0.5" y2="1">
-                <stop offset="0%" stopColor="#a5f3fc" />
-                <stop offset="100%" stopColor="#67e8f9" />
+            <linearGradient id="diamond-facet-1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#D8B4FE" />
+                <stop offset="100%" stopColor="#A855F7" />
             </linearGradient>
-            <linearGradient id="diamond-icon-facet-1" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#fbcfe8" />
-                <stop offset="100%" stopColor="#f0abfc" />
+            <linearGradient id="diamond-facet-2" x1="1" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#C4B5FD" />
+                <stop offset="100%" stopColor="#8B5CF6" />
             </linearGradient>
-            <linearGradient id="diamond-icon-facet-2" x1="1" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#d8b4fe" />
-                <stop offset="100%" stopColor="#c4b5fd" />
+            <linearGradient id="diamond-facet-3" x1="0.5" y1="0" x2="0.5" y2="1">
+                <stop offset="0%" stopColor="#E9D5FF" />
+                <stop offset="100%" stopColor="#C084FC" />
             </linearGradient>
-             <linearGradient id="diamond-icon-facet-3" x1="0.5" y1="0" x2="0.5" y2="1">
-                <stop offset="0%" stopColor="#e0f2fe" />
-                <stop offset="100%" stopColor="#bae6fd" />
+            <linearGradient id="diamond-facet-4" x1="0.5" y1="1" x2="0.5" y2="0">
+                <stop offset="0%" stopColor="#5B21B6" />
+                <stop offset="100%" stopColor="#9333EA" />
             </linearGradient>
-            <filter id="diamond-glow">
-                <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-                <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                </feMerge>
+            <filter id="diamond-icon-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
             </filter>
         </defs>
         <g opacity={isFilled ? 1 : 0.4} style={{ transition: 'opacity 0.5s ease' }}>
-            {/* Main Body */}
-            <path d="M10 40 L50 95 L90 40 L50 5 Z" fill="url(#diamond-icon-main)" stroke="#06b6d4" strokeWidth="1.5" />
-            
-            {/* Facets */}
-            <path d="M50 5 L 10 40 L 30 40 Z" fill="url(#diamond-icon-facet-1)" />
-            <path d="M50 5 L 90 40 L 70 40 Z" fill="url(#diamond-icon-facet-2)" />
-            <path d="M30 40 L50 5 L 70 40 Z" fill="url(#diamond-icon-facet-3)" />
+            {/* Glow */}
+            {isFilled && (
+                <path d="M50 5 L95 45 L50 95 L5 45 Z" fill="#A855F7" filter="url(#diamond-icon-glow)" opacity="0.7" />
+            )}
 
-            <path d="M10 40 L 50 95 L 50 40 Z" fill="#c4b5fd" opacity="0.6"/>
-            <path d="M90 40 L 50 95 L 50 40 Z" fill="#f9a8d4" opacity="0.6"/>
-            <path d="M50 5 L 50 95" stroke="white" strokeWidth="1" opacity="0.5" />
+            {/* Main Body with stroke */}
+            <g stroke="#4C1D95" strokeWidth="2.5" strokeLinejoin="round">
+                {/* Top Facets */}
+                <path d="M50 5 L 95 45 L 75 45 Z" fill="url(#diamond-facet-2)" />
+                <path d="M50 5 L 5 45 L 25 45 Z" fill="url(#diamond-facet-1)" />
+                <path d="M25 45 L 75 45 L 50 5 Z" fill="url(#diamond-facet-3)" />
 
-
-            {/* Sparkles */}
-            <g style={{ filter: isFilled ? 'url(#diamond-glow)' : 'none' }}>
-                <path d="M18,23 L 23,28 L 28,23 L 23,18 Z" fill="white"/>
-                <path d="M75 35 l 6 0 l 0 6 l -6 0 z" fill="#fef08a" transform="rotate(45 78 38)"/>
-                <circle cx="50" cy="18" r="5" fill="white" opacity="0.9" />
+                {/* Bottom Facets */}
+                <path d="M5 45 L 50 95 L 25 45 Z" fill="url(#diamond-facet-2)" />
+                <path d="M95 45 L 50 95 L 75 45 Z" fill="url(#diamond-facet-1)" />
+                <path d="M25 45 L 50 95 L 75 45 Z" fill="url(#diamond-facet-4)" />
             </g>
+
+            {/* Shine effect */}
+            <path d="M 28 40 L 50 15 L 55 25 L 35 40 Z" fill="white" opacity="0.6" />
+
         </g>
     </svg>
 );

@@ -7,64 +7,56 @@ const CastleIcon: React.FC<{ className?: string; isFilled?: boolean; }> = ({ cla
     className={className}
   >
     <defs>
-      <linearGradient id="castle-icon-pink-grad" x1="0.5" y1="0" x2="0.5" y2="1">
-        <stop offset="0%" stopColor="#fce7f3" />
-        <stop offset="100%" stopColor="#f9a8d4" />
-      </linearGradient>
-      <linearGradient id="castle-icon-purple-grad" x1="0.5" y1="0" x2="0.5" y2="1">
-        <stop offset="0%" stopColor="#e9d5ff" />
-        <stop offset="100%" stopColor="#d8b4fe" />
-      </linearGradient>
-       <linearGradient id="castle-icon-gold-grad" x1="0.5" y1="0" x2="0.5" y2="1">
-        <stop offset="0%" stopColor="#fef9c3" />
-        <stop offset="100%" stopColor="#fde047" />
-      </linearGradient>
-      <linearGradient id="castle-icon-blue-grad" x1="0.5" y1="0" x2="0.5" y2="1">
-        <stop offset="0%" stopColor="#bae6fd" />
-        <stop offset="100%" stopColor="#7dd3fc" />
-      </linearGradient>
+      {/* Texture for a subtle, storybook feel */}
+      <filter id="castle-texture" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.2" numOctaves="1" result="texture"/>
+        <feDiffuseLighting in="texture" lightingColor="#fff" surfaceScale="1">
+          <feDistantLight azimuth="45" elevation="60"/>
+        </feDiffuseLighting>
+        <feComposite in="SourceGraphic" in2="specularLighting" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="lit"/>
+        <feBlend in="lit" in2="SourceGraphic" mode="multiply" />
+      </filter>
+      <pattern id="texture-pattern" patternUnits="userSpaceOnUse" width="100" height="100">
+        <image href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='10' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E" x="0" y="0" width="100" height="100"/>
+      </pattern>
     </defs>
     
     <g opacity={isFilled ? 1 : 0.4} style={{ transition: 'opacity 0.5s ease' }}>
-      {/* Main Structure */}
-      <path d="M40 180 V 100 H 160 V 180 Z" fill="url(#castle-icon-pink-grad)" stroke="#db2777" strokeWidth="3"/>
-      <path d="M50 100 H 150 V 85 H 50 Z" fill="url(#castle-icon-pink-grad)" stroke="#db2777" strokeWidth="3"/>
+        <g style={{ filter: 'url(#castle-texture)' }}>
+            {/* Main Wall */}
+            <path d="M40 180 V 100 H 160 V 180 Z" fill="#FBCFE8"/>
+            {/* Crenellations */}
+            <path d="M40 100 h10 v-10 h15 v10 h15 v-10 h15 v10 h15 v-10 h15 v10 h15 v-10 h10 v10 Z" fill="#F472B6" />
 
-      {/* Towers */}
-      <path d="M40 130 V 60 H 70 V 130" fill="url(#castle-icon-pink-grad)" stroke="#db2777" strokeWidth="3" />
-      <path d="M130 130 V 60 H 160 V 130" fill="url(#castle-icon-pink-grad)" stroke="#db2777" strokeWidth="3" />
-      <path d="M80 85 V 30 H 120 V 85" fill="url(#castle-icon-purple-grad)" stroke="#9333ea" strokeWidth="3" />
+            {/* Left Tower */}
+            <path d="M30 140 V 60 H 70 V 140 Z" fill="#FEF3C7" />
+            <path d="M30 100 h10 v-10 h15 v10 h10 v-40 h-35 Z" fill="#FEF3C7" />
 
-      {/* Roofs */}
-      <path d="M40 60 L 55 35 L 70 60 Z" fill="url(#castle-icon-blue-grad)" stroke="#0284c7" strokeWidth="3"/>
-      <path d="M130 60 L 145 35 L 160 60 Z" fill="url(#castle-icon-blue-grad)" stroke="#0284c7" strokeWidth="3"/>
-      <path d="M80 30 L 100 5 L 120 30 Z" fill="url(#castle-icon-blue-grad)" stroke="#0284c7" strokeWidth="3"/>
+            {/* Right Tower */}
+            <path d="M130 140 V 60 H 170 V 140 Z" fill="#FEF3C7" />
+            <path d="M130 100 h10 v-10 h15 v10 h10 v-40 h-35 Z" fill="#FEF3C7" />
 
-      {/* Door */}
-      <path d="M90 180 v -35 a 10 10 0 0 1 20 0 v 35" fill="#e9d5ff" stroke="#9333ea" strokeWidth="3"/>
-      
-      {/* Windows */}
-      <circle cx="100" cy="115" r="10" fill="url(#castle-icon-gold-grad)" stroke="#f59e0b" strokeWidth="2.5"/>
-      <rect x="50" y="75" width="16" height="24" rx="8" fill="url(#castle-icon-gold-grad)" stroke="#f59e0b" strokeWidth="2.5"/>
-      <rect x="134" y="75" width="16" height="24" rx="8" fill="url(#castle-icon-gold-grad)" stroke="#f59e0b" strokeWidth="2.5"/>
-      <rect x="92" y="45" width="16" height="24" rx="8" fill="url(#castle-icon-gold-grad)" stroke="#f59e0b" strokeWidth="2.5"/>
-       {/* Window Shine */}
-      <path d="M95 110 C 98 110, 98 115, 95 115" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M97 48 C 100 48, 100 53, 97 53" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+            {/* Central Tower */}
+            <path d="M80 100 V 40 H 120 V 100 Z" fill="#FBCFE8" />
 
+            {/* Roofs */}
+            <path d="M30 60 L 50 25 L 70 60 Z" fill="#5B21B6"/>
+            <path d="M130 60 L 150 25 L 170 60 Z" fill="#5B21B6"/>
+            <path d="M80 40 L 100 5 L 120 40 Z" fill="#5B21B6"/>
+            
+            {/* Door */}
+            <path d="M90 180 v -35 a 10 10 0 0 1 20 0 v 35" fill="#4C1D95"/>
 
-      {/* Flags */}
-      <path d="M55 35 V 20 L 65 25 L 55 30 Z" fill="#f472b6" stroke="#db2777" strokeWidth="2"/>
-      <path d="M145 35 V 20 L 155 25 L 145 30 Z" fill="#f472b6" stroke="#db2777" strokeWidth="2"/>
-      <path d="M100 5 V -10 L 110 -5 L 100 0 Z" fill="#f472b6" stroke="#db2777" strokeWidth="2"/>
+            {/* Windows */}
+            <path d="M45 70 a 5 5 0 0 1 10 0 v15 a 5 5 0 0 1 -10 0 Z" fill="#5B21B6" />
+            <path d="M145 70 a 5 5 0 0 1 10 0 v15 a 5 5 0 0 1 -10 0 Z" fill="#5B21B6" />
 
-      {isFilled && <>
-        <path d="M25,20 L 30,25 L 35,20 L 30,15 Z" fill="white"/>
-        <path d="M170 35 l 5 0 l 0 5 l -5 0 z" fill="#fef08a" transform="rotate(45 172.5 37.5)"/>
-        <circle cx="100" cy="140" r="3" fill="white" opacity="0.9" />
-        <circle cx="20" cy="80" r="4" fill="#fef08a" opacity="0.9" />
-      </>}
-
+            {/* Flags */}
+            <path d="M50 25 V 10 L 60 15 Z" fill="#F472B6"/>
+            <path d="M150 25 V 10 L 160 15 Z" fill="#F472B6"/>
+        </g>
+        {/* Apply texture overlay */}
+        <rect x="0" y="0" width="200" height="200" fill="url(#texture-pattern)" opacity="0.05" />
     </g>
   </svg>
 );

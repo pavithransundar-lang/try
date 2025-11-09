@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import CloseIcon from './icons/CloseIcon';
 import AnimatedButterfly from './AnimatedButterfly';
-import { playSound, sounds } from '../services/audioService';
 import { BUTTERFLY_TYPES } from '../constants';
 
 type ButterflyType = typeof BUTTERFLY_TYPES[number];
@@ -88,7 +87,6 @@ const CatchButterflyScreen: React.FC<{ onCatch: () => void }> = ({ onCatch }) =>
   };
 
   const handleCatch = (id: number) => {
-    playSound(sounds.catch);
     setCaught(id);
     setTimeout(() => {
         onCatch();

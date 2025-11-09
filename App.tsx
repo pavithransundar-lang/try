@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useRef } from 'react';
-import { STUDENT_NAME, TOTAL_TOKENS } from './constants';
+import { STUDENT_NAME, TOTAL_TOKENS, CastleType, CASTLE_DESIGNS } from './constants';
 import { getMotivationalMessage } from './services/geminiService';
 import MoodScreen from './components/MoodScreen';
 import CatchButterflyScreen from './components/CatchButterflyScreen';
@@ -27,6 +27,7 @@ const App: React.FC = () => {
   const [showCastleCelebration, setShowCastleCelebration] = useState(false);
   const [showChatBot, setShowChatBot] = useState(false);
   const [flyingButterflyTarget, setFlyingButterflyTarget] = useState<number | null>(null);
+  const [selectedCastle, setSelectedCastle] = useState<CastleType>(CASTLE_DESIGNS[0]);
 
   const tokenRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -39,9 +40,6 @@ const App: React.FC = () => {
       const message = await getMotivationalMessage();
       setMessages(prev => [...prev, message]);
     } catch (err: any) {
-      // FIX: Improved error handling for Gemini API calls.
-      // This provides user-friendly feedback for rate limits and other errors,
-      // while still giving positive reinforcement with a fallback message.
       const errorMessage = err?.message || err?.toString() || '';
       if (errorMessage.includes('429') || errorMessage.includes('RESOURCE_EXHAUSTED')) {
         setError("The magical message fairies are taking a short nap! Let's give them a moment.");
@@ -55,7 +53,8 @@ const App: React.FC = () => {
     }
   }, []);
 
-  const handleStartQuest = () => {
+  const handleStartQuest = (castle: CastleType) => {
+    setSelectedCastle(castle);
     setScreen('quest');
   };
 
@@ -70,7 +69,6 @@ const App: React.FC = () => {
     setTokenCount(newTokenCount);
 
     if (newTokenCount === TOTAL_TOKENS) {
-      // Start the butterfly swarm animation first for a fluid sequence.
       setShowCompletionAnimation(true);
     } else {
       fetchMotivationalMessage();
@@ -78,7 +76,6 @@ const App: React.FC = () => {
   };
 
   const handleCompletionAnimationEnd = () => {
-      // Once the swarm is done, hide it and show the final castle celebration.
       setShowCompletionAnimation(false);
       setShowCastleCelebration(true);
   };
@@ -88,7 +85,6 @@ const App: React.FC = () => {
     setScreen('quest');
     if (isCompleted || flyingButterflyTarget !== null) return;
     
-    // Trigger the animation for the next token slot
     setFlyingButterflyTarget(tokenCount);
   };
 
@@ -121,12 +117,12 @@ const App: React.FC = () => {
                   Celine's Royal Reading Quest
                 </h1>
                 <p className="text-md md:text-lg text-purple-700 mt-2 font-sans">
-                  Earn butterflies and travel to the magical castle!
+                  Earn butterflies on your quest to reach the castle!
                 </p>
               </header>
 
               <section className="my-8">
-                <TokenBoard tokenCount={tokenCount} tokenRefs={tokenRefs} />
+                <TokenBoard tokenCount={tokenCount} tokenRefs={tokenRefs} selectedCastle={selectedCastle} />
               </section>
 
               <section className="my-8">
@@ -170,7 +166,8 @@ const App: React.FC = () => {
       {showCastleCelebration && (
         <CastleCelebration
             startElement={tokenRefs.current[TOTAL_TOKENS - 1]}
-            onAnimationEnd={() => setShowCastleCelebration(false)}
+            onResetQuest={handleReset}
+            selectedCastle={selectedCastle}
         />
       )}
 
