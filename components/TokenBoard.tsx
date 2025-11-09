@@ -38,7 +38,7 @@ const TokenBoard: React.FC<TokenBoardProps> = ({ tokenCount, tokenRefs }) => {
                 >
                   <div className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center transition-all duration-500 ease-in-out relative
                     ${isCompleted ? 'bg-white shadow-lg scale-110' : 'bg-purple-200/50'}
-                    ${isCurrent ? 'animate-glow-ring' : ''}
+                    ${isCurrent ? 'current-stage-glow' : ''}
                     ${isNewlyCompleted ? 'animate-sparkle-pop' : ''}`}>
                       {isCompleted && <div className="absolute inset-0 rounded-full bg-violet-200/50 animate-ping-slow" />}
                       <div className="w-12 h-12 md:w-16 md:h-16">
@@ -50,7 +50,7 @@ const TokenBoard: React.FC<TokenBoardProps> = ({ tokenCount, tokenRefs }) => {
                   </p>
                 </div>
                 {index < QUEST_STEPS.length - 1 && (
-                   <div className="flex-1 h-2 bg-gradient-to-r from-violet-300 to-fuchsia-300 rounded-full mt-10 relative overflow-hidden">
+                   <div className="flex-1 h-2 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full mt-10 relative overflow-hidden">
                      <div 
                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-sky-400 to-violet-500 rounded-full transition-all duration-1000 ease-out"
                        style={{ width: index < tokenCount ? '100%' : '0%' }}
@@ -72,13 +72,27 @@ const TokenBoard: React.FC<TokenBoardProps> = ({ tokenCount, tokenRefs }) => {
         .animate-sparkle-pop {
           animation: sparkle-pop 0.6s ease-out forwards;
         }
-        @keyframes glow-ring {
-          0%, 100% { box-shadow: 0 0 12px 3px rgba(139, 92, 246, 0.4); }
-          50% { box-shadow: 0 0 20px 8px rgba(139, 92, 246, 0.7); }
+        
+        .current-stage-glow::before {
+          content: '';
+          position: absolute;
+          inset: -6px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(139, 92, 246, 0) 70%);
+          animation: spin-glow 3s linear infinite, subtle-pulse 2.5s ease-in-out infinite;
+          z-index: -1;
         }
-        .animate-glow-ring {
-          animation: glow-ring 2.5s ease-in-out infinite;
+
+        @keyframes spin-glow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
+
+        @keyframes subtle-pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
         .animate-ping-slow {
           animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
